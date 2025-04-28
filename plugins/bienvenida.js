@@ -1,3 +1,5 @@
+import db from '../lib/database.js'
+
 let handler = async (m, { conn }) => {
   if (!m.isGroup) return
   if (!(m.messageStubType == 27 || m.messageStubType == 29)) return
@@ -8,20 +10,33 @@ let handler = async (m, { conn }) => {
   const groupMetadata = await conn.groupMetadata(m.chat)
   const groupName = groupMetadata.subject
   const groupDesc = groupMetadata.desc || 'Sin descripción disponible'
-  const userName = (await conn.getName(who)) || 'Invitado'
+  const botName = conn.user.name
 
-  // Ruta de la imagen que tú pongas en media/
+  // Ruta de imágenes
   const imagenBienvenida = './media/bienvenida.jpg'
   const imagenDespedida = './media/despedida.jpg'
 
-  if (m.messageStubType == 27) {
-    let texto = `╭━━━〔 *BIENVENIDO/A* 〕━━━✦\n┃👤 𝗡𝗼𝗺𝗯𝗿𝗲: @${who.split('@')[0]}\n┃🏠 𝗚𝗿𝘂𝗽𝗼: *${groupName}*\n┃📝 𝗗𝗲𝘀𝗰𝗿𝗶𝗽𝗰𝗶ó𝗻:\n┃${groupDesc}\n╰━━━━━━━━━━━━━━━━━✦`
-    await conn.sendMessage(m.chat, { image: { url: imagenBienvenida }, caption: texto, mentions: [who] })
-  }
+  // Mensajes configurables
+  let welcome = db.data.welcome?.[m.chat] || `╭━━━〔 *BIENVENIDO/A* 〕━━━✦
+┃👤 Nombre: @${who.split('@')[0]}
+┃🏠 Grupo: *${groupName}*
+┃📝 Descripción:
+┃${groupDesc}
+┃🤖 Bot: *${botName}*
+╰━━━━━━━━━━━━━━━━━✦`
 
+  let bye = db.data.bye?.[m.chat] || `╭━━━〔 *DESPEDIDA* 〕━━━✦
+┃👤 Nombre: @${who.split('@')[0]}
+┃🏠 Grupo: *${groupName}*
+┃👋 Esperamos verte pronto.
+┃🤖 Bot: *${botName}*
+╰━━━━━━━━━━━━━━━━━✦`
+
+  if (m.messageStubType == 27) {
+    await conn.sendMessage(m.chat, { image: { url: imagenBienvenida }, caption: welcome, mentions: [who] })
+  }
   if (m.messageStubType == 29) {
-    let texto = `╭━━━〔 *DESPEDIDA* 〕━━━✦\n┃👤 𝗡𝗼𝗺𝗯𝗿𝗲: @${who.split('@')[0]}\n┃🏠 𝗚𝗿𝘂𝗽𝗼: *${groupName}*\n┃👋 Esperamos verte pronto.\n╰━━━━━━━━━━━━━━━━━✦`
-    await conn.sendMessage(m.chat, { image: { url: imagenDespedida }, caption: texto, mentions: [who] })
+    await conn.sendMessage(m.chat, { image: { url: imagenDespedida }, caption: bye, mentions: [who] })
   }
 }
 
