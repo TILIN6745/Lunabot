@@ -1,73 +1,79 @@
-import makeWASocket, { DisconnectReason, useMultiFileAuthState } from '@whiskeysockets/baileys'
-import pino from 'pino'
-import chalk from 'chalk'
-import { readdirSync } from 'fs'
-import * as path from 'path'
-import * as dotenv from 'dotenv'
+console.log('[ ℹ️ ] Iniciando...');
+import {join, dirname} from 'path';
+import {createRequire} from 'module';
+import {fileURLToPath} from 'url';
+import {setupMaster, fork} from 'cluster';
+import cfonts from 'cfonts';
+import {createInterface} from 'readline';
+import yargs from 'yargs';
 
-dotenv.config()
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const require = createRequire(__dirname);
+const {say} = cfonts;
+const rl = createInterface(process.stdin, process.stdout);
 
-async function startBot() {
-    const { state, saveCreds } = await useMultiFileAuthState('session')
-    const sock = makeWASocket({
-        logger: pino({ level: 'silent' }),
-        auth: state,
-        printQRInTerminal: true
-    })
+say('LunaBot Oficial', {
+  font: 'chrome',
+  align: 'center',
+  gradient: ['blue', 'cyan'] // Azul como pediste
+});
 
-    sock.ev.on('creds.update', saveCreds)
+say('By Tilín Ventas', {
+  font: 'console',
+  align: 'center',
+  gradient: ['blue', 'cyan']
+});
 
-    sock.ev.on('messages.upsert', async m => {
-        const msg = m.messages[0]
-        if (!msg.message || msg.key.fromMe) return
+let isRunning = false;
+/**
+* Start a js file
+* @param {String} file `path/to/file`
+*/
+function start(file) {
+  if (isRunning) return;
+  isRunning = true;
+  const args = [join(__dirname, file), ...process.argv.slice(2)];
 
-        const from = msg.key.remoteJid
-        const text = msg.message.conversation || msg.message.extendedTextMessage?.text
+  setupMaster({
+    exec: args[0],
+    args: args.slice(1)
+  });
 
-        if (!text) return
+  const p = fork();
+  p.on('message', (data) => {
+    console.log('[RECIBIDO]', data);
+    switch (data) {
+      case 'reset':
+        p.process.kill();
+        isRunning = false;
+        start.apply(this, arguments);
+        break;
+      case 'uptime':
+        p.send(process.uptime());
+        break;
+    }
+  });
 
-        // Carga automática de plugins
-        const plugins = readdirSync('./plugins').filter(file => file.endsWith('.js'))
-        for (let plugin of plugins) {
-            let command = await import(`./plugins/${plugin}`)
-            if (typeof command.default === 'function') {
-                command.default(sock, msg, text, from)
-            }
-        }
-    })
+  p.on('exit', (_, code) => {
+    isRunning = false;
+    console.error('[ ℹ️ ] Ocurrió un error inesperado:', code);
+    p.process.kill();
+    isRunning = false;
+    start.apply(this, arguments);
+    if (process.env.pm_id) {
+      process.exit(1);
+    } else {
+      process.exit();
+    }
+  });
 
-    sock.ev.on('connection.update', update => {
-        const { connection, lastDisconnect } = update
-        if (connection === 'close') {
-            let reason = new Boom(lastDisconnect?.error)?.output.statusCode
-            if (reason === DisconnectReason.badSession) {
-                console.log(chalk.red('Bad session, Please delete session and scan again'))
-                sock.logout()
-            } else if (reason === DisconnectReason.connectionClosed) {
-                console.log(chalk.red('Connection closed, reconnecting...'))
-                startBot()
-            } else if (reason === DisconnectReason.connectionLost) {
-                console.log(chalk.red('Connection Lost from Server, reconnecting...'))
-                startBot()
-            } else if (reason === DisconnectReason.connectionReplaced) {
-                console.log(chalk.red('Connection Replaced, another new session opened, please close current session first'))
-                sock.logout()
-            } else if (reason === DisconnectReason.loggedOut) {
-                console.log(chalk.red('Device Logged Out, Please Scan Again And Run.'))
-                sock.logout()
-            } else if (reason === DisconnectReason.restartRequired) {
-                console.log(chalk.yellow('Restart Required, Restarting...'))
-                startBot()
-            } else if (reason === DisconnectReason.timedOut) {
-                console.log(chalk.red('Connection TimedOut, Reconnecting...'))
-                startBot()
-            } else {
-                sock.end(`Unknown DisconnectReason: ${reason}|${connection}`)
-            }
-        } else if (connection === 'open') {
-            console.log(chalk.green('BOT LISTO! LUNA BOT ESTÁ ONLINE'))
-        }
-    })
+  const opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse());
+  if (!opts['test']) {
+    if (!rl.listenerCount()) {
+      rl.on('line', (line) => {
+        p.emit('message', line.trim());
+      });
+    }
+  }
 }
-
-startBot()
+start('main.js');
