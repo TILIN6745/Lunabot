@@ -6,7 +6,7 @@ import cfonts from 'cfonts';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const mainBot = path.join(__dirname, 'luna.js');
 
-function startBot(file) {
+function iniciarBot(file) {
   cfonts.say('LunaBot Oficial', {
     font: 'block',
     align: 'center',
@@ -14,31 +14,36 @@ function startBot(file) {
     transitionGradient: true,
   });
 
-  cfonts.say('Bot creado por Tilín Ventas', {
+  cfonts.say('By Tilín Ventas', {
     font: 'console',
     align: 'center',
     colors: ['blueBright'],
   });
 
   const args = [file, ...process.argv.slice(2)];
-  const p = spawn(process.argv[0], args, { stdio: ['inherit', 'inherit', 'inherit', 'ipc'] });
+  const proceso = spawn(process.argv[0], args, { stdio: ['inherit', 'inherit', 'inherit', 'ipc'] });
 
-  p.on('close', (code) => {
-    console.log(`[ SISTEMA ] El proceso terminó con código: ${code}`);
-    if (code === 0) {
-      startBot(file);
-    } else {
-      console.error('[ ERROR ] Ocurrió un fallo inesperado.');
+  proceso.on('message', (mensaje) => {
+    console.log('[ BOT DICE ]', mensaje);
+    if (mensaje === 'reset') {
+      console.log('[ SISTEMA ] Reiniciando bot automáticamente...');
+      proceso.kill('SIGTERM');
+      iniciarBot(file);
     }
   });
 
-  p.on('message', (msg) => {
-    console.log('[ MENSAJE DEL BOT ]', msg);
-    if (msg === 'reset') {
-      p.kill('SIGTERM');
-      startBot(file);
+  proceso.on('exit', (code) => {
+    console.error(`[ ERROR ] El bot se cerró con código: ${code}`);
+    if (code !== 0) {
+      console.log('[ SISTEMA ] Reiniciando bot tras error...');
+      iniciarBot(file);
     }
+  });
+
+  proceso.on('error', (err) => {
+    console.error('[ ERROR CRÍTICO ]', err);
+    iniciarBot(file);
   });
 }
 
-startBot(mainBot);
+iniciarBot(mainBot);
