@@ -1,0 +1,20 @@
+{
+  "users": {},
+  "groups": {},
+  "chats": {},
+  "settings": {
+    "botName": "LunaBot",
+    "ownerName": "TuNombre",
+    "ownerNumber": "521XXXXXXXXXX",
+    "prefix": ".",
+    "language": "es",
+    "welcome": true,
+    "antilink": false,
+    "autolevelup": true
+  },
+  "stats": {
+    "messagesSent": 0,
+    "groupsJoined": 0,
+    "usersRegistered": 0
+  }
+}
