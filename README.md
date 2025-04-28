@@ -1,17 +1,3 @@
----
-
-# 2. README.md (Versión PRO - Markdown + HTML)
-
-Este se verá **aún más elegante** en GitHub, usando imágenes, iconos y todo:
-
-```markdown
-<h1 align="center">LunaBot Oficial</h1>
-<p align="center">
-  Bienvenido a <strong>LunaBot Oficial</strong>, un poderoso bot de WhatsApp desarrollado por <strong>Tilin Ventas</strong>.
-</p>
-
----
-
 ## ✨ Características principales
 
 - 🎵 Comandos de entretenimiento: `.play`, `.audio`, `.top`, juegos y más.
