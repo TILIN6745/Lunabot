@@ -1,81 +1,100 @@
-//══════════ LunaBot Oficial by Tilin Ventas ══════════//
+//═════════════════════════════════════════════//
+//                CONFIGURACIÓN V10            //
+//═════════════════════════════════════════════//
 
-// Datos principales
-global.owner = ['+528336105471'] // Número del dueño en formato internacional
-global.ownername = 'Tilin Ventas' // Nombre del dueño
-global.botname = 'LunaBot Oficial' // Nombre del bot
-global.instagram = 'https://instagram.com/tilin.ff.23' // Instagram del dueño
-global.canalwhatsapp = 'https://whatsapp.com/channel/0029VauK3kA4SpkPQyez1z00' // Canal de WhatsApp
-
-// Configuración
-global.prefix = '.' // Prefijo de comandos
-global.sessionName = 'lunabot' // Nombre de sesión
-global.autoread = true // Auto-leer mensajes
-global.antiprivado = false // El bot NO bloquea a quienes le hablen privado
-
-// Mensajes por defecto
-global.mess = {
-    success: '✅ ¡Hecho!',
-    admin: '❗ Este comando solo es para admins.',
-    botAdmin: '❗ Necesito ser admin para ejecutar este comando.',
-    owner: '❗ Este comando solo lo puede usar el dueño.',
-    group: '❗ Este comando es solo para grupos.',
-    private: '❗ Este comando es solo para privado.',
-    bot: '❗ Esta función es solo para el bot.',
-    wait: '⌛ Cargando, espera un momento...',
-    error: '❗ Ocurrió un error, intenta más tarde.',
-    endLimit: '❗ Se te acabó el límite diario, se renovará en 24 horas.'
+global.bot = {
+  nombre: 'LunaBot',
+  version: '10.0.0',
+  lenguaje: 'es',
+  autoread: true,
+  antiborrado: true,
+  autograbar: false,
+  restrict: false,
+  velocidad: '⚡', // Ej: ⚡ / 🚀 / 🐢
+  logo: './media/logo.jpg',
+  packname: 'LunaBot Stickers',
+  author: 'Tilín Ventas',
+  footer: '© LunaBot 2025 by Tilín'
 }
 
-// Bienvenida personalizada
-global.welcomeMessage = (userName, groupName, description) => {
-    return `¡Bienvenido/a ${userName} a *${groupName}*!
-    
-📄 *Descripción del grupo:*
-${description}
-
-Soy *${global.botname}*, creada por *${global.ownername}*.
-¡Disfruta tu estancia!`
+global.owner = {
+  numeros: ['528336105471'],
+  nombre: 'Tilín Ventas',
+  premium: true,
+  contacto: {
+    instagram: 'https://instagram.com/tilin.ff.23',
+    canal: 'https://whatsapp.com/channel/0029VauK3kA4SpkPQyez1z00',
+    github: 'https://github.com/TilinOficial'
+  }
 }
 
-// Mensaje de despedida
-global.byeMessage = (userName, groupName) => {
-    return `👋 ${userName} ha salido del grupo *${groupName}*.
-¡Le deseamos suerte!`
+global.comandos = {
+  prefijos: ['.', '/', '!'],
+  respuesta: {
+    exito: '✅ ¡Hecho!',
+    error: '❌ Error, intenta más tarde',
+    soloAdmin: '⚠️ Solo admins',
+    soloOwner: '👑 Solo Tilín',
+    soloGrupo: '👥 Solo en grupos',
+    soloPrivado: '📩 Solo en privado',
+    cargando: '⏳ Procesando...',
+    premium: '💎 Comando solo para usuarios premium.'
+  }
 }
 
-// Multimedia
-global.logo = './media/logo.jpg' // Ruta del logo
-global.thumb = './media/thumb.jpg' // Imagen miniatura por defecto
-
-// Límite de comandos por usuario
-global.limitawal = {
-    premium: "Infinity", // Usuarios premium sin límites
-    free: 25 // Usuarios normales 25 comandos diarios
+global.multimedia = {
+  bienvenida: './media/bienvenida.jpg',
+  despedida: './media/despedida.jpg',
+  error: './media/error.jpg',
+  audioDefault: './media/notif.mp3'
 }
 
-// APIs (para música, stickers, etc.)
-global.APIs = {
-    zenz: 'https://zenzapis.xyz', 
-}
-global.APIKeys = {
-    'https://zenzapis.xyz': 'TuApiKeyAquí', // Puedes registrarte en ZenzApi para conseguirla
-}
-
-// Configuración especial
 global.rpg = {
-    darahawal: 100,
-    besiawal: 15,
-    goldawal: 10,
-    emeraldawal: 5,
-    umpanawal: 5,
-    potionawal: 1
+  iniciarVida: 100,
+  iniciarDinero: 500,
+  nivelBase: 1,
+  multiplicadorXP: 75
 }
 
-//══════════ No tocar abajo si no sabes ══════════//
+global.api = {
+  zenz: 'https://zenzapis.xyz',
+  xteam: 'https://api.xteam.xyz',
+  lolhuman: 'https://api.lolhuman.xyz'
+}
 
-// Para que no explote si falta algo
-global.fs = require('fs')
-global.chalk = require('chalk')
+global.keys = {
+  'https://zenzapis.xyz': 'tu_clave_zenz',
+  'https://api.xteam.xyz': 'tu_clave_xteam',
+  'https://api.lolhuman.xyz': 'tu_clave_lol'
+}
 
-console.log(chalk.greenBright('✅ LunaBot Oficial iniciado correctamente.'))
+global.funciones = {
+  registroObligatorio: true,
+  economía: true,
+  niveles: true,
+  juegos: true,
+  modoPublico: true,
+  antiSpam: true,
+  antiLink: true,
+  inteligenciaArtificial: true
+}
+
+global.ai = {
+  modelo: 'gpt-3.5-turbo',
+  creador: 'Tilín Ventas',
+  modoGrosero: true
+}
+
+global.database = {
+  archivo: './database.json',
+  autosave: true
+}
+
+global.estadisticas = {
+  usuarios: 0,
+  grupos: 0,
+  comandosTotales: 150,
+  fechaInicio: new Date()
+}
+
+module.exports = global
