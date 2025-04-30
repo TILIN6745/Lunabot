@@ -1,73 +1,58 @@
-export default {
-  name: 'menu',
-  alias: ['menú', 'help', 'ayuda'],
-  description: 'Muestra el menú principal del bot',
-  run: async (sock, m) => {
-    const nombreBot = global.botName || 'LunaBot';
-    const nombreUsuario = m.pushName || 'Amigo';
-    const fecha = new Date().toLocaleDateString('es-MX', {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-    });
+const handler = async (m, { conn, usedPrefix, commands }) => {
+let total = Object.values(commands).filter(v => v?.command).length
+let texto = `
+╭━━〔 *LunaBot Oficial* 〕━━⬣
+┃ 𝙋𝙧𝙤𝙥𝙞𝙚𝙩𝙖𝙧𝙞𝙤: Tilin Ventas
+┃ 𝙉𝙪́𝙢𝙚𝙧𝙤: wa.me/528336105471
+┃ 𝘾𝙖𝙣𝙖𝙡: https://whatsapp.com/channel/0029VauK3kA4SpkPQyez1z00
+┃ 𝗖𝗼𝗺𝗮𝗻𝗱𝗼𝘀 𝘁𝗼𝘁𝗮𝗹𝗲𝘀: ${total}
+┃ 
+┃ *Menú de Comandos:*
+╰━━━━━━━━━━━━━━━━━━⬣
 
-    const menu = `
-╭━━━『 *${nombreBot}* 』━━━⬣
-┃ ✦ Hola, ${nombreUsuario}
-┃ ✦ Fecha: ${fecha}
-┃ ✦ Bot en línea
-╰━━━━━━━━━━━━━━━━━⬣
+> *𝗜𝗡𝗙𝗢*
+⤷ ${usedPrefix}ping
+⤷ ${usedPrefix}infobot
+⤷ ${usedPrefix}estado
 
-╭━━━『 *INFORMACIÓN* 』━━━⬣
-┃ ➥ .estado
-┃ ➥ .ping
-┃ ➥ .grupos
-┃ ➥ .infobot
-╰━━━━━━━━━━━━━━━━⬣
+> *𝗚𝗥𝗨𝗣𝗢𝗦*
+⤷ ${usedPrefix}abrir / cerrar
+⤷ ${usedPrefix}grupo info
+⤷ ${usedPrefix}link
+⤷ ${usedPrefix}promote / demote
+⤷ ${usedPrefix}add / kick
 
-╭━━━『 *CREADOR* 』━━━⬣
-┃ ➥ .menu
-┃ ➥ .owner
-┃ ➥ .donar
-╰━━━━━━━━━━━━━━━━⬣
+> *𝗔𝗡𝗧𝗜𝗦 & 𝗔𝗨𝗧𝗢𝗠𝗢𝗗𝗘𝗥𝗔𝗖𝗜𝗢́𝗡*
+⤷ ${usedPrefix}antilink on/off
+⤷ ${usedPrefix}antiprivado on/off
+⤷ ${usedPrefix}detect on/off
 
-╭━━━『 *CONFIGURACIÓN* 』━━━⬣
-┃ ➥ .welcome on/off
-┃ ➥ .autonivel on/off
-┃ ➥ .antilink on/off
-┃ ➥ .modoadmin on/off
-╰━━━━━━━━━━━━━━━━⬣
+> *𝗠𝗨𝗟𝗧𝗜𝗠𝗘𝗗𝗜𝗔*
+⤷ ${usedPrefix}play <texto>
+⤷ ${usedPrefix}ytmp3 <url>
+⤷ ${usedPrefix}ytmp4 <url>
+⤷ ${usedPrefix}tiktok <url>
+⤷ ${usedPrefix}sticker / toimg
 
-╭━━━『 *JUEGOS* 』━━━⬣
-┃ ➥ .ppt (piedra, papel o tijeras)
-┃ ➥ .adivinanza
-┃ ➥ .riddle
-┃ ➥ .math (modo difícil)
-╰━━━━━━━━━━━━━━━━⬣
+> *𝗔𝗨𝗗𝗜𝗢𝗦*
+⤷ ${usedPrefix}menuaudio
+(Audios personalizados)
 
-╭━━━『 *DESCARGAS* 』━━━⬣
-┃ ➥ .play (nombre o link)
-┃ ➥ .ytmp3 (link)
-┃ ➥ .ytmp4 (link)
-┃ ➥ .tiktok (link)
-╰━━━━━━━━━━━━━━━━⬣
+> *𝗠𝗘𝗡𝗨 +18*  
+⤷ ${usedPrefix}menu18  
+(NSFW +18 para admins)
 
-╭━━━『 *DIVERSIÓN* 』━━━⬣
-┃ ➥ .tagall
-┃ ➥ .todos
-┃ ➥ .notify (mensaje)
-┃ ➥ .stickermenu
-╰━━━━━━━━━━━━━━━━⬣
+> *𝗢𝗧𝗥𝗢𝗦*
+⤷ ${usedPrefix}donar
+⤷ ${usedPrefix}owner
+⤷ ${usedPrefix}reportar <texto>
 
-╭━━━『 *UTILIDADES* 』━━━⬣
-┃ ➥ .clima (ciudad)
-┃ ➥ .traducir (texto)
-┃ ➥ .calculadora (expresión)
-╰━━━━━━━━━━━━━━━━⬣
+╭─〔 *Gracias por usar LunaBot* 〕─⬣
+┃ Usa ${usedPrefix}reportar para sugerencias.
+╰━━━━━━━━━━━━━━━━━━━━━━⬣
+`.trim()
 
-╭━━━━『 *FIN DEL MENÚ* 』━━━━⬣
-┃ Gracias por usar *${nombreBot}*
-╰━━━━━━━━━━━━━━━━━━━━⬣
-    `.trim();
-
-    await sock.sendMessage(m.chat, { text: menu }, { quoted: m });
-  }
+await conn.sendMessage(m.chat, { text: texto }, { quoted: m })
 }
+handler.command = ['menu']
+export default handler
