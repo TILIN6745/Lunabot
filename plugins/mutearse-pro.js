@@ -1,27 +1,41 @@
+let muteList = global.muteList || (global.muteList = {})
+
 const handler = async (m, { conn, args, isAdmin, isBotAdmin, participants, usedPrefix, command }) => {
-  if (!m.isGroup) throw '*[ ⚠️ ] Este comando solo se puede usar en grupos.*'
-  if (!isAdmin) throw '*[ ⚠️ ] Solo los administradores pueden usar este comando.*'
-  if (!isBotAdmin) throw '*[ ⚠️ ] Necesito permisos de administrador para realizar esta acción.*'
+  if (!m.isGroup) return
+  const groupId = m.chat
 
-  let user = m.mentionedJid[0] || (args[0] ? conn.decodeJid(args[0]) : null)
-  if (!user) throw `*[❗] Debes etiquetar o responder a un usuario.*\n\nEjemplo:\n${usedPrefix + command} @usuario`
+  // Detectar y eliminar mensajes de usuarios muteados
+  if (muteList[groupId] && muteList[groupId].includes(m.sender)) {
+    if (m.isBaileys) return
+    await conn.sendMessage(m.chat, { delete: m.key })
+    return
+  }
 
-  if (user === conn.user.jid) throw '*[❗] No puedo silenciarme a mí mismo.*'
-  if (user === m.sender) throw '*[❗] No puedes silenciarte tú mismo.*'
-  if (participants.find(p => p.id === user)?.admin) throw '*[❗] No puedo silenciar a otro administrador.*'
+  // Comandos mute / unmute
+  if (command === 'muteuser' || command === 'unmuteuser') {
+    if (!isAdmin) throw '*[ ⚠️ ] Solo los administradores pueden usar este comando.*'
+    if (!isBotAdmin) throw '*[ ⚠️ ] Necesito permisos de administrador para realizar esta acción.*'
 
-  if (command === 'muteuser') {
-    await conn.groupParticipantsUpdate(m.chat, [user], 'restrict')
-    await conn.sendMessage(m.chat, {
-      text: `*[🔇 MUTE ACTIVADO]*\n\n@${user.split('@')[0]} ha sido silenciado y no podrá enviar mensajes.`,
-      mentions: [user]
-    })
-  } else if (command === 'unmuteuser') {
-    await conn.groupParticipantsUpdate(m.chat, [user], 'unrestrict')
-    await conn.sendMessage(m.chat, {
-      text: `*[🔊 MUTE DESACTIVADO]*\n\n@${user.split('@')[0]} ya puede volver a enviar mensajes.`,
-      mentions: [user]
-    })
+    let user = m.mentionedJid[0] || (args[0] ? conn.decodeJid(args[0]) : null)
+    if (!user) throw `*[❗] Debes etiquetar o responder a un usuario.*\n\nEjemplo:\n${usedPrefix + command} @usuario`
+
+    if (participants.find(p => p.id === user)?.admin) throw '*[❗] No puedo silenciar a otro administrador.*'
+
+    muteList[groupId] = muteList[groupId] || []
+
+    if (command === 'muteuser') {
+      if (!muteList[groupId].includes(user)) muteList[groupId].push(user)
+      await conn.sendMessage(m.chat, {
+        text: `*[🔇 MUTE ACTIVADO]*\n\n@${user.split('@')[0]} ha sido silenciado. Todos sus mensajes serán eliminados.`,
+        mentions: [user]
+      })
+    } else if (command === 'unmuteuser') {
+      muteList[groupId] = muteList[groupId].filter(id => id !== user)
+      await conn.sendMessage(m.chat, {
+        text: `*[🔊 MUTE DESACTIVADO]*\n\n@${user.split('@')[0]} ya puede volver a escribir sin restricciones.`,
+        mentions: [user]
+      })
+    }
   }
 }
 
