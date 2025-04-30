@@ -1,0 +1,18 @@
+{
+  "name": "LunaBot",
+  "description": "Bot de WhatsApp para grupos, creado por Tilin Ventas",
+  "repository": "https://github.com/TILIN6745/Lunabot.git", 
+  "logo": "https://i.imgur.com/8fK4h6F.jpg",
+  "keywords": ["nodejs", "bot", "whatsapp-bot", "lunabot", "tilin"],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest"
+    },
+    {
+      "url": "https://github.com/bogini/heroku-buildpack-graphicsmagick"
+    }
+  ]
+}
