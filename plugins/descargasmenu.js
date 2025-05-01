@@ -1,34 +1,42 @@
-const handler = async (m, { conn, usedPrefix, command }) => {
-  let user = global.db.data.users[m.sender]
-  let nombre = await conn.getName(m.sender)
-
-  let menuDescargas = `
-*¡Hola ${nombre}!* Este es el menú de *descargas* de *LunaBot*.
-
-╭━〔 🚀 DESCARGAS DISPONIBLES 🚀 〕━⬣
-┃➤ *.play* (nombre o link) 
-┃➤ *.playdoc* (MP3 en documento)
-┃➤ *.ytmp3* (link YouTube)
-┃➤ *.ytmp4* (link YouTube)
-┃➤ *.ytmusica* (YouTube audio HD)
-┃➤ *.ytvideo* (YouTube video HD)
-┃➤ *.mediafire* (link directo)
-┃➤ *.tiktok* (sin marca de agua)
-┃➤ *.instagram* (foto/video)
-┃➤ *.facebook* (video público)
-┃➤ *.twitter* (video)
-┃➤ *.pinterestdl* (descarga imagen)
-┃➤ *.gitclone* (clonar repositorio GitHub)
+const handler = async (m, { conn, command, usedPrefix }) => {
+  let text = `
+╭━━━━〔 *🌐 MENÚ DE DESCARGAS* 〕━━━━⬣
+┃
+┃📥 _.play <texto o enlace>_
+┃📥 _.play2 <texto o enlace>_
+┃📥 _.playdoc <texto o enlace>_
+┃📥 _.play3 <texto o enlace>_
+┃📥 _.ytmp3 <link>_
+┃📥 _.ytmp4 <link>_
+┃📥 _.ytmp3doc <link>_
+┃📥 _.ytmp4doc <link>_
+┃📥 _.spotify <link>_
+┃📥 _.mediafire <link>_
+┃📥 _.instagram <link>_
+┃📥 _.tiktok <link>_
+┃📥 _.tiktoknowm <link>_
+┃📥 _.facebook <link>_
+┃📥 _.twitter <link>_
+┃📥 _.pinterestdl <link>_
+┃📥 _.soundcloud <link>_
+┃📥 _.apk <nombre>_
+┃📥 _.apkdone <nombre>_
+┃📥 _.apkmody <nombre>_
+┃📥 _.apkpure <nombre>_
+┃📥 _.moddroid <nombre>_
+┃📥 _.mediafire2 <link>_
+┃
 ╰━━━━━━━━━━━━━━━━━━━━⬣
+`.trim();
 
-Usa estos comandos con cuidado y responsabilidad.
-`.trim()
+  conn.sendHydrated(m.chat, text, `LunaBot - Sistema de Descargas`, null, null, null, null, null, [
+    ['Menú Principal', `${usedPrefix}menu`],
+    ['Menú Completo', `${usedPrefix}menucompleto`]
+  ], m);
+};
 
-  await conn.sendFile(m.chat, 'https://telegra.ph/file/64a8cfb61113c6b404768.jpg', 'descargas.jpg', menuDescargas, m)
-}
+handler.help = ['descargasmenu'];
+handler.tags = ['menu'];
+handler.command = /^(descargasmenu|menudescargas)$/i;
 
-handler.command = /^(descargasmenu|menudescargas)$/i
-handler.tags = ['menu']
-handler.help = ['descargasmenu', 'menudescargas']
-
-export default handler
+export default handler;
