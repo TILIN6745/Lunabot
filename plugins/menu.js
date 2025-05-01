@@ -1,58 +1,67 @@
-const handler = async (m, { conn, usedPrefix, commands }) => {
-let total = Object.values(commands).filter(v => v?.command).length
-let texto = `
-╭━━〔 *LunaBot Oficial* 〕━━⬣
-┃ 𝙋𝙧𝙤𝙥𝙞𝙚𝙩𝙖𝙧𝙞𝙤: Tilin Ventas
-┃ 𝙉𝙪́𝙢𝙚𝙧𝙤: wa.me/528336105471
-┃ 𝘾𝙖𝙣𝙖𝙡: https://whatsapp.com/channel/0029VauK3kA4SpkPQyez1z00
-┃ 𝗖𝗼𝗺𝗮𝗻𝗱𝗼𝘀 𝘁𝗼𝘁𝗮𝗹𝗲𝘀: ${total}
-┃ 
-┃ *Menú de Comandos:*
-╰━━━━━━━━━━━━━━━━━━⬣
+import { xpRange } from '../lib/levelling.js'
+import { promises } from 'fs'
+import { join } from 'path'
 
-> *𝗜𝗡𝗙𝗢*
-⤷ ${usedPrefix}ping
-⤷ ${usedPrefix}infobot
-⤷ ${usedPrefix}estado
+let handler = async (m, { conn, usedPrefix, command }) => {
+  let { exp, level, role, diamond = 0, money = 0, token = 0 } = global.db.data.users[m.sender]
+  let { min, xp, max } = xpRange(level, global.multiplier)
+  let name = await conn.getName(m.sender)
+  let date = new Date().toLocaleDateString('es', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+  let totalComandos = Object.keys(global.plugins).length
 
-> *𝗚𝗥𝗨𝗣𝗢𝗦*
-⤷ ${usedPrefix}abrir / cerrar
-⤷ ${usedPrefix}grupo info
-⤷ ${usedPrefix}link
-⤷ ${usedPrefix}promote / demote
-⤷ ${usedPrefix}add / kick
+  let menu = `
+╭──〔 ✦ 𝐋𝐮𝐧𝐚𝐁𝐨𝐭 𝐌𝐄𝐍𝐔 ✦ 〕──╮
+│  ʜᴏʟᴀ, *${name}*
+│  🗓️ ${date}
+│  🚀 𝐕𝐞𝐫𝐬𝐢𝐨́𝐧: 10.0
+│  ⚙️ 𝐌𝐨𝐝𝐨: Público
+│  🧩 𝐂𝐨𝐦𝐚𝐧𝐝𝐨𝐬: ${totalComandos}
+╰────────────────────╯
 
-> *𝗔𝗡𝗧𝗜𝗦 & 𝗔𝗨𝗧𝗢𝗠𝗢𝗗𝗘𝗥𝗔𝗖𝗜𝗢́𝗡*
-⤷ ${usedPrefix}antilink on/off
-⤷ ${usedPrefix}antiprivado on/off
-⤷ ${usedPrefix}detect on/off
+✨ *𝐄𝐒𝐓𝐀𝐃𝐎 𝐃𝐄𝐋 𝐔𝐒𝐔𝐀𝐑𝐈𝐎* ✨
+➺ Nivel: *${level}*
+➺ Diamantes: *${diamond} 💎*
+➺ LunaCoins: *${money} 🌙*
+➺ Tokens: *${token} 🪙*
 
-> *𝗠𝗨𝗟𝗧𝗜𝗠𝗘𝗗𝗜𝗔*
-⤷ ${usedPrefix}play <texto>
-⤷ ${usedPrefix}ytmp3 <url>
-⤷ ${usedPrefix}ytmp4 <url>
-⤷ ${usedPrefix}tiktok <url>
-⤷ ${usedPrefix}sticker / toimg
+📂 *𝐂𝐀𝐓𝐄𝐆𝐎𝐑𝐈́𝐀𝐒*:
 
-> *𝗔𝗨𝗗𝗜𝗢𝗦*
-⤷ ${usedPrefix}menuaudio
-(Audios personalizados)
+┌──❖ 𝐂𝐎𝐌𝐏𝐋𝐄𝐓𝐎 ❖
+│ ⤷ ${usedPrefix}menucompleto
+│ ⤷ ${usedPrefix}allmenu
+└─────────────
 
-> *𝗠𝗘𝗡𝗨 +18*  
-⤷ ${usedPrefix}menu18  
-(NSFW +18 para admins)
+┌──❖ 𝐃𝐄𝐒𝐂𝐀𝐑𝐆𝐀𝐒 ❖
+│ ⤷ ${usedPrefix}descargasmenu
+└─────────────
 
-> *𝗢𝗧𝗥𝗢𝗦*
-⤷ ${usedPrefix}donar
-⤷ ${usedPrefix}owner
-⤷ ${usedPrefix}reportar <texto>
+┌──❖ 𝐀𝐔𝐃𝐈𝐎𝐒 ❖
+│ ⤷ ${usedPrefix}menuaudio
+└─────────────
 
-╭─〔 *Gracias por usar LunaBot* 〕─⬣
-┃ Usa ${usedPrefix}reportar para sugerencias.
-╰━━━━━━━━━━━━━━━━━━━━━━⬣
+┌──❖ +𝟏𝟖 ❖
+│ ⤷ ${usedPrefix}menu18
+└─────────────
+
+┌──❖ 𝐉𝐔𝐄𝐆𝐎𝐒 ❖
+│ ⤷ ${usedPrefix}juegosmenu
+└─────────────
+
+┌──❖ 𝐆𝐑𝐔𝐏𝐎𝐒 ❖
+│ ⤷ ${usedPrefix}grupomenu
+└─────────────
+
+┌──❖ 𝐏𝐑𝐎𝐏𝐈𝐄𝐓𝐀𝐑𝐈𝐎 ❖
+│ ⤷ ${usedPrefix}ownermenu
+└─────────────
+
+🌙 𝐁𝐲 *LunaBot* | 𝐒𝐢𝐬𝐭𝐞𝐦𝐚 𝐆𝐚𝐥𝐚́𝐜𝐭𝐢𝐜𝐨
 `.trim()
 
-await conn.sendMessage(m.chat, { text: texto }, { quoted: m })
+  conn.sendMessage(m.chat, { text: menu, contextInfo: { mentionedJid: [m.sender] } }, { quoted: m })
 }
-handler.command = ['menu']
+
+handler.help = ['menu']
+handler.tags = ['main']
+handler.command = /^menu|menuluna|m$/i
 export default handler
